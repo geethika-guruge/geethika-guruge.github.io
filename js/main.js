@@ -1,9 +1,9 @@
-/* =================================
-------------------------------------
-	Photo Gallery HTML Template
+/* ======================================
+-----------------------------------------
+	The Look - Photo Gallery Template
 	Version: 1.0
- ------------------------------------
- ====================================*/
+ ---------------------------------------
+ =======================================*/
 
 
 'use strict';
@@ -19,30 +19,15 @@ $(window).on('load', function() {
 });
 
 (function($) {
+
 	/*------------------
 		Navigation
 	--------------------*/
-	$('.nav-switch-warp').on('click', function() {
-		$('.header-section, .nav-switch').addClass('active');
-		$('.main-warp').addClass('overflow-hidden');
+	$('.main-menu').slicknav({
+		appendTo:'.header-warp',
+		closedSymbol: '<i class="fa fa-angle-down"></i>',
+		openedSymbol: '<i class="fa fa-angle-up"></i>'
 	});
-
-	$('.header-close').on('click', function() {
-		$('.header-section, .nav-switch').removeClass('active');
-		$('.main-warp').removeClass('overflow-hidden');
-	});
-
-	// Search model
-	$('.search-switch').on('click', function() {
-		$('.search-model').fadeIn(400);
-	});
-
-	$('.search-close-switch').on('click', function() {
-		$('.search-model').fadeOut(400,function(){
-			$('#search-input').val('');
-		});
-	});
-
 
 	/*------------------
 		Background Set
@@ -53,38 +38,16 @@ $(window).on('load', function() {
 	});
 
 
-
-	/*------------------
-		Scrollbar
-	--------------------*/
-	if($(window).width() > 991) {
-		$(".header-section").niceScroll({
-			cursorborder:"",
-			cursorcolor:"#afafaf",
-			boxzoom:false,
-			cursorwidth: 4,
-		});
-	}
-
-	$(".blog-warp").niceScroll({
-		cursorborder:"",
-		cursorcolor:"#323232",
-		boxzoom:false,
-		cursorwidth: 3,
-		autohidemode:false,
-		background: '#b9c9da',
-		cursorborderradius:0,
-		railoffset: { top: 50, right: 0, left: 0, bottom: 0 },
-		railpadding: { top: 0, right: 0, left: 0, bottom: 100 },
-
-	});
-
-
 	/*------------------
 		Hero Slider
 	--------------------*/
-	var hero_s = $(".hero-slider");
-    hero_s.owlCarousel({
+	var sliderCount;
+	$(".hero-slider").on("initialized.owl.carousel", function(e) {
+		sliderCount = e.item.count;
+		if( sliderCount < 10) {
+			sliderCount = "0" + sliderCount;
+		}
+	}).owlCarousel({
         loop: true,
         margin: 0,
         nav: true,
@@ -92,62 +55,86 @@ $(window).on('load', function() {
         dots: false,
         animateOut: 'fadeOut',
     	animateIn: 'fadeIn',
-        navText: ['<img src="./img/angle-left-w.png" alt="">', '<img src="./img/angle-rignt.png" alt="">'],
+		navText: ['<img src="img/icons/arrow-left-white.png" alt="">', '<img src="img/icons/arrow-right-black.png" alt="">'],
         smartSpeed: 1200,
-        autoHeight: false,
-		startPosition: 'URLHash',
-        mouseDrag: false,
-        onInitialized: function() {
-        	var a = this.items().length;
-        	if(a < 10){
-            	$("#snh-1").html("<span>01" + "</span>/0" + a);
-       		} else{
-       			$("#snh-1").html("<span>01" + "</span>/" + a);
-       		}
-        }
-    }).on("changed.owl.carousel", function(a) {
-        var b = --a.item.index, a = a.item.count;
-        if(a < 10){
-        	$("#snh-1").html("<span>0" + ( 1 > b ? b + a : b > a ? b - a : b) + "</span>/0" + a);
-    	} else{
-    		$("#snh-1").html("<span> "+ (1 > b ? b + a : b > a ? b - a : b) + "</span>/" + a);
-    	}
-    });
+		autoplay: true,
+		mouseDrag: false
+    }).on("changed.owl.carousel", function(e) {
+		
+		var Index = e.item.index - 1;
+		var Count = e.item.count;
+		var PreIndex = Index - 1;
+		var NextIndex = Index + 1;
+
+
+		if(PreIndex < 0) {
+			PreIndex = Count - 1;
+		}
+
+		if(PreIndex < 1) {
+			PreIndex = Count;
+		}
+
+		if (PreIndex < 10) {
+			PreIndex = "0" + PreIndex;
+		}
+
+		if(NextIndex > Count) {
+			NextIndex = 1;
+		}
+
+		if (NextIndex < 10) {
+			NextIndex = "0" + NextIndex;
+		}
+
+
+		$(".hero-slider .owl-nav button.owl-prev").html('<img src="img/icons/arrow-left-white.png" alt=""> <span> '+ PreIndex +'</span> ');
+		$(".hero-slider .owl-nav button.owl-next").html('<span> '+ NextIndex +' </span> <img src="img/icons/arrow-right-black.png" alt="">');
+	});
+
+	$(".hero-slider .owl-nav button.owl-prev").html('<img src="img/icons/arrow-left-white.png" alt=""> <span> '+ sliderCount +'</span> ');
+
+	$(".hero-slider .owl-nav button.owl-next").html('<span>02</span> <img src="img/icons/arrow-right-black.png" alt="">');
 
 
 	/*------------------
 		Gallery Slider
 	--------------------*/
-	$('.gallery-single-slider').owlCarousel({
-        loop: true,
-        margin: 0,
-        nav: true,
-        items: 1,
-        dots: false,
-        navText: ['<img src="./img/angle-left.png" alt="">', '<img src="./img/angle-rignt-w.png" alt="">'],
+	$('.gallery-slider').owlCarousel({
+		loop: true,
+		nav: true,
+		navText: ['<img src="img/icons/arrow-left-black.png" alt="">', '<img src="img/icons/arrow-right-black.png" alt="">'],
+		dots:false,
+		autoplay: true,
+		margin: 99,
+		stagePadding: 183,
+		responsive : {
+			0 : {
+				items: 1,
+				stagePadding: 0,
+				margin: 30,
+			},
+			480 : {
+				items: 2,
+				stagePadding: 0,
+				margin: 30,
+			},
+			768 : {
+				items: 2,
+				stagePadding: 80,
+				margin: 50,
+			},
+			992 : {
+				items: 2,
+				margin: 80,
+				stagePadding: 153,
+			}
+		}
 	});
+	$('.gallery-slider').append('<div class="nav-warp"><div class="sp-container"></div></div>');
+	$('.gallery-slider .owl-nav').appendTo('.nav-warp .sp-container');
 
-
-	/*------------------
-		Isotope Filter
-	--------------------*/
-	var $container = $('.portfolio-gallery');
-		$container.imagesLoaded().progress( function() {
-			$container.isotope();
-		});
-
-	$('.portfolio-filter li').on("click", function(){
-		$(".portfolio-filter li").removeClass("active");
-		$(this).addClass("active");
-		var selector = $(this).attr('data-filter');
-		$container.imagesLoaded().progress( function() {
-			$container.isotope({
-				filter: selector,
-			});
-		});
-		return false;
-	});
-
+	
 
 
 	/*------------------
@@ -163,6 +150,7 @@ $(window).on('load', function() {
 	});
 
 
+
 	/*------------------
 		Circle progress
 	--------------------*/
@@ -172,27 +160,27 @@ $(window).on('load', function() {
 		var cptitle = $(this).data("cptitle");
 		var cpid 	= $(this).data("cpid");
 
-		$(this).append('<div class="'+ cpid +'"></div><div class="progress-info"><h2>'+ cpvalue +'%</h2><p>'+ cptitle +'</p></div>');
+		$(this).append('<div class="'+ cpid +' loader-circle"></div><div class="progress-info"><h4>'+ cpvalue +'%</h4><p>'+ cptitle +'</p></div>');
 
 		if (cpvalue < 100) {
 
 			$('.' + cpid).circleProgress({
 				value: '0.' + cpvalue,
-				size: 166,
-				thickness: 5,
+				size: 119,
+				thickness: 15,
 				fill: cpcolor,
 				emptyFill: "rgba(0, 0, 0, 0)"
 			});
 		} else {
 			$('.' + cpid).circleProgress({
 				value: 1,
-				size: 166,
-				thickness: 5,
+				size: 119,
+				thickness: 15,
 				fill: cpcolor,
 				emptyFill: "rgba(0, 0, 0, 0)"
 			});
 		}
-
 	});
+	
 
 })(jQuery);
